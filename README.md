@@ -11,6 +11,11 @@ This is the service written on Go for Borg Backup repo monitoring.
   - __BORGOZ_PORT__
   - __BORGOZ_REPOS_DIR__ - directory where is all repos
   - __BORGOZ_DEFAULT_REPO_KEY__ - default repo key (it uses when :key is not set)
+  - __BORGOZ_LOG_LEVEL__ - set LogLevel
+            - "DEBUG"
+            - "INFO" (DEFAULT)
+            - "WARN"
+            - "ERROR"
 
 ## Check the last backup not older then :time in minutes.
 __/check/backup/:repo/not_older_then/:time/:key__

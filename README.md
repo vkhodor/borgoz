@@ -22,15 +22,22 @@ __/check/backup/:repo/not_older_then/:time/:key__
 
   - __:repo__ - borg repo name
   - __:time__ - repo should be yanger then time in minutes
-  - __:key__  - borg repo key
+  - __:key__  - borg repo key ( uses BORGOZ_DEFAULT_REPO_KEY if bit set)  
 
 
-1. Does directory exist?
+1. ~~Does directory exist?~~
 2. Is directory borg-repo?
 3. Is last backup not older them :time
 
-## Check repos health (borg check).
+## TODO: Check repos health (borg check).
 __/check/repo/:repo/:key__
   - __:repo__ - borg repo name
   - __:key__ - borg repo key
 
+
+## Development tools:
+
+```bash
+ . ./set_env.sh
+
+```

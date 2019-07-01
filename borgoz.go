@@ -16,11 +16,12 @@ type Application struct {
 }
 
 type Configuration struct {
-	Host string
-	Port int
+	BorgBin        string
+	Host           string
+	Port           int
 	ReposDirectory string
 	DefaultRepoKey string
-	LogLevel log.Lvl
+	LogLevel       log.Lvl
 }
 
 func String2LogLevel(logLevel string) log.Lvl {
@@ -77,12 +78,18 @@ func NewConfiguration() (Configuration, error){
 			)
 	}
 
+	borgBin, ok := os.LookupEnv(EnvVariableBorgBin)
+	if !ok {
+		borgBin = DefaultBorgBin
+	}
+
 	return Configuration{
-		Host: host,
-		Port: port,
+		Host:           host,
+		Port:           port,
 		ReposDirectory: reposDirectory,
 		DefaultRepoKey: defaultRepoKey,
-		LogLevel: String2LogLevel(logLevel),
+		LogLevel:       String2LogLevel(logLevel),
+		BorgBin:        borgBin,
 	}, nil
 }
 
@@ -97,7 +104,7 @@ func NewApplication() (Application, error) {
 	if cfg.LogLevel != log.DEBUG {
 		e.HideBanner = true
 	}
-	
+
 	app := Application{Config: &cfg, Echo: e, Logger: log.New(LogPrefix)}
 	app.Logger.SetLevel(app.Config.LogLevel)
 	app.Logger.Debugf("%v", app.Config)
@@ -117,7 +124,22 @@ func (a *Application)handlerBackupNotOlderThen(c echo.Context) error {
 	}
 
 	a.Logger.Infof("repo=%v time=%v key=%v", repo, time, key)
-	return nil
+	borgRepo, err := NewBorgRepo(fmt.Sprintf("%v/%v", a.Config.ReposDirectory, repo), a.Config.BorgBin, key)
+	if err != nil {
+		a.Logger.Errorf("NewBorgRepo returned: %v", err)
+		return echo.NewHTTPError(404, fmt.Sprintf("%v is not valid borg repo", repo))
+	}
+
+	a.Logger.Debugf("%v is valid borg repo", repo)
+	lastBackupTime, err := borgRepo.GetLastBorgBackupTime()
+
+	if err != nil {
+		a.Logger.Errorf("GetLastBorgBackupTime returned: %v", err)
+		return echo.NewHTTPError(404, fmt.Sprintf("%v has no valid backup", repo))
+	}
+	fmt.Printf("%v\n", lastBackupTime)
+
+	return echo.NewHTTPError(200, fmt.Sprintf("%v is OK", borgRepo.path))
 }
 
 func (a *Application) Start() error {

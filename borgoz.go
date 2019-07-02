@@ -144,7 +144,7 @@ func (a *Application)handlerBackupNotOlderThen(c echo.Context) error {
 		}
 		return echo.NewHTTPError(404, msg)
 	}
-	a.Logger.Debugf("%v: IsLastBackupEarlierThen returned OK")
+	a.Logger.Debugf("%v: IsLastBackupEarlierThen returned OK", repo)
 
 	return echo.NewHTTPError(200, fmt.Sprintf("%v LastBackupTime is OK", repo))
 }

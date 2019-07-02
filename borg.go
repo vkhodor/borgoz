@@ -47,7 +47,7 @@ type BorgBackupList struct {
 }
 
 func (b *BorgRepo) GetLastBorgBackupTime() (time.Time, error) {
-	err := os.Setenv("BORG_PASSPHRASE", "iewei1ahdeij9ni8geChieKee3ohm3")
+	err := os.Setenv("BORG_PASSPHRASE", b.key)
 	if err != nil {
 		return time.Time{}, err
 	}
@@ -78,8 +78,7 @@ func (b *BorgRepo) IsLastBackupEarlierThen(seconds int) (bool, error) {
 	}
 	now := time.Now()
 	passedDuration := time.Duration(now.Unix() - lastBackupTime.Unix()) * time.Second
-	fmt.Printf("Passed duration : %v\n", passedDuration)
-	fmt.Printf("Time duration: %v\n", time.Duration(seconds)* time.Second)
+
 	if passedDuration > time.Duration(seconds) * time.Second {
 		return false, nil
 	}

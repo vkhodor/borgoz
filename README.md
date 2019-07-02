@@ -1,9 +1,12 @@
 # BorGoZ
+
+
 ## Intro
 
 __Bor__ g + __Go__ + __Z__ abbix
 
 This is the service written on Go for Borg Backup repo monitoring.
+
 
 ## Enviroment variables.
 
@@ -17,28 +20,19 @@ This is the service written on Go for Borg Backup repo monitoring.
             - "WARN"
             - "ERROR"
 
-## Check the last backup not older then :time in minutes.
-__/check/lastBackupTime/:repo/:time/:key__
+
+## Check the last backup not older then :time in seconds.
+__/check/lastBackupTime/:repo/:time/:key__ - with specific repo key
+__/check/lastBackupTime/:repo/:time__ - with default repo key
 
   - __:repo__ - borg repo name
   - __:time__ - repo should be yanger then time in minutes
-  - __:key__  - borg repo key ( uses BORGOZ_DEFAULT_REPO_KEY if bit set)  
+  - __:key__  - borg repo key ( uses BORGOZ_DEFAULT_REPO_KEY if not set)  
 
 
-1. ~~Does directory exist?~~
-2. ~~Is directory borg-repo?~~
-3. Is last backup not older them :time
-    if now - lastBackupTime <= :time then OK
+# TODO:
 
 ## TODO: Check repos health (borg check).
 __/check/repoHealth/:repo/:key__
   - __:repo__ - borg repo name
   - __:key__ - borg repo key
-
-
-## Development tools:
-
-```bash
- . ./set_env.sh
-
-```

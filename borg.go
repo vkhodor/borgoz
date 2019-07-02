@@ -71,7 +71,7 @@ func (b *BorgRepo) GetLastBorgBackupTime() (time.Time, error) {
 	return b.lastBackupTime, nil
 }
 
-func (b *BorgRepo)IsLastBackupOlderThen(seconds int) (bool, error) {
+func (b *BorgRepo) IsLastBackupEarlierThen(seconds int) (bool, error) {
 	lastBackupTime, err := b.GetLastBorgBackupTime()
 	if err != nil {
 		return false, err

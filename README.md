@@ -18,7 +18,7 @@ This is the service written on Go for Borg Backup repo monitoring.
             - "ERROR"
 
 ## Check the last backup not older then :time in minutes.
-__/check/backup/:repo/not_older_then/:time/:key__
+__/check/lastBackupTime/:repo/:time/:key__
 
   - __:repo__ - borg repo name
   - __:time__ - repo should be yanger then time in minutes
@@ -26,11 +26,12 @@ __/check/backup/:repo/not_older_then/:time/:key__
 
 
 1. ~~Does directory exist?~~
-2. Is directory borg-repo?
+2. ~~Is directory borg-repo?~~
 3. Is last backup not older them :time
+    if now - lastBackupTime <= :time then OK
 
 ## TODO: Check repos health (borg check).
-__/check/repo/:repo/:key__
+__/check/repoHealth/:repo/:key__
   - __:repo__ - borg repo name
   - __:key__ - borg repo key
 

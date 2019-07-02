@@ -20,4 +20,3 @@ const (
 )
 
 const ErrorExitNewApplication int = 1 // Exit when Fatal error during NewApplication
-

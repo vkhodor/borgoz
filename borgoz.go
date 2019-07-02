@@ -136,14 +136,14 @@ func (a *Application)handlerBackupNotOlderThen(c echo.Context) error {
 		return echo.NewHTTPError(400, fmt.Sprintf("Can't parse string %v to int: %v", time, err))
 	}
 
-	if ok, err := borgRepo.IsLastBackupOlderThen(intTime); !ok {
+	if ok, err := borgRepo.IsLastBackupEarlierThen(intTime); !ok {
 		msg := fmt.Sprintf("%v has too old last backup", repo)
 		if err != nil {
-			msg = fmt.Sprintf("%v: IsLastBackupOlderThen returned error: %v", repo, err)
+			msg = fmt.Sprintf("%v: IsLastBackupEarlierThen returned error: %v", repo, err)
 		}
 		return echo.NewHTTPError(404, msg)
 	}
-	a.Logger.Debugf("%v: IsLastBackupOlderThen returned OK")
+	a.Logger.Debugf("%v: IsLastBackupEarlierThen returned OK")
 
 	return echo.NewHTTPError(200, fmt.Sprintf("%v LastBackupTime is OK", repo))
 }

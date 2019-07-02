@@ -109,8 +109,8 @@ func NewApplication() (Application, error) {
 	app.Logger.SetLevel(app.Config.LogLevel)
 	app.Logger.Debugf("%v", app.Config)
 
-	e.GET("/check/backup/:repo/not_older_then/:time/:key", app.handlerBackupNotOlderThen)
-	e.GET("/check/backup/:repo/not_older_then/:time", app.handlerBackupNotOlderThen)
+	e.GET("/check/lastBackupTime/:repo/:time/:key", app.handlerBackupNotOlderThen)
+	e.GET("/check/lastBackupTime/:repo/:time", app.handlerBackupNotOlderThen)
 
 	return app, nil
 }
@@ -129,17 +129,23 @@ func (a *Application)handlerBackupNotOlderThen(c echo.Context) error {
 		a.Logger.Errorf("NewBorgRepo returned: %v", err)
 		return echo.NewHTTPError(404, fmt.Sprintf("%v is not valid borg repo", repo))
 	}
-
 	a.Logger.Debugf("%v is valid borg repo", repo)
-	lastBackupTime, err := borgRepo.GetLastBorgBackupTime()
 
+	intTime, err := strconv.Atoi(time)
 	if err != nil {
-		a.Logger.Errorf("GetLastBorgBackupTime returned: %v", err)
-		return echo.NewHTTPError(404, fmt.Sprintf("%v has no valid backup", repo))
+		return echo.NewHTTPError(400, fmt.Sprintf("Can't parse string %v to int: %v", time, err))
 	}
-	fmt.Printf("%v\n", lastBackupTime)
 
-	return echo.NewHTTPError(200, fmt.Sprintf("%v is OK", borgRepo.path))
+	if ok, err := borgRepo.IsLastBackupOlderThen(intTime); !ok {
+		msg := fmt.Sprintf("%v has too old last backup", repo)
+		if err != nil {
+			msg = fmt.Sprintf("%v: IsLastBackupOlderThen returned error: %v", repo, err)
+		}
+		return echo.NewHTTPError(404, msg)
+	}
+	a.Logger.Debugf("%v: IsLastBackupOlderThen returned OK")
+
+	return echo.NewHTTPError(200, fmt.Sprintf("%v LastBackupTime is OK", repo))
 }
 
 func (a *Application) Start() error {

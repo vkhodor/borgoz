@@ -2,9 +2,9 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"go/types"
 	"os"
 	"os/exec"
 	"strings"
@@ -47,10 +47,6 @@ type BorgBackupList struct {
 }
 
 func (b *BorgRepo) GetLastBorgBackupTime() (time.Time, error) {
-//	if b.lastBackupTime == nil {
-//		//Get from repo
-//	}
-
 	err := os.Setenv("BORG_PASSPHRASE", "iewei1ahdeij9ni8geChieKee3ohm3")
 	if err != nil {
 		return time.Time{}, err
@@ -61,7 +57,34 @@ func (b *BorgRepo) GetLastBorgBackupTime() (time.Time, error) {
 		return time.Time{}, err
 	}
 
+	backupOut := BorgBackupList{}
+	err = json.Unmarshal(borgOut, &backupOut)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	b.lastBackupTime, err = ParseTimeInCurrentLocation(backupOut.Repository.LastModified)
+	if err != nil {
+		return time.Time{}, err
+	}
+
 	return b.lastBackupTime, nil
+}
+
+func (b *BorgRepo)IsLastBackupOlderThen(seconds int) (bool, error) {
+	lastBackupTime, err := b.GetLastBorgBackupTime()
+	if err != nil {
+		return false, err
+	}
+	now := time.Now()
+	passedDuration := time.Duration(now.Unix() - lastBackupTime.Unix()) * time.Second
+	fmt.Printf("Passed duration : %v\n", passedDuration)
+	fmt.Printf("Time duration: %v\n", time.Duration(seconds)* time.Second)
+	if passedDuration > time.Duration(seconds) * time.Second {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func NewBorgRepo(path string, borgBin string, key string) (*BorgRepo, error) {

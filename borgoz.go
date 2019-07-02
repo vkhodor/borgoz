@@ -129,6 +129,7 @@ func (a *Application)handlerBackupNotOlderThen(c echo.Context) error {
 		a.Logger.Errorf("NewBorgRepo returned: %v", err)
 		return echo.NewHTTPError(404, fmt.Sprintf("%v is not valid borg repo", repo))
 	}
+
 	a.Logger.Debugf("%v is valid borg repo", repo)
 
 	intTime, err := strconv.Atoi(time)

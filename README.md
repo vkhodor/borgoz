@@ -41,10 +41,10 @@ $ make build
   - __BORGOZ_REPOS_DIR__ - directory where is all Borg Backup repos
   - __BORGOZ_DEFAULT_REPO_KEY__ - default repo key (it uses when :key is not set)
   - __BORGOZ_LOG_LEVEL__ - set LogLevel
-            - "DEBUG"
-            - "INFO" (DEFAULT)
-            - "WARN"
-            - "ERROR"
+      - "DEBUG"
+      - "INFO" (DEFAULT)
+      - "WARN"
+      - "ERROR"
 
 ## Checks
 

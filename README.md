@@ -28,7 +28,7 @@ $ borgoz-linux64
 ## Build from source.
 
 ```bash
-$ git clone github.com/vkhodor/borgoz
+$ git clone https://github.com/vkhodor/borgoz
 $ cd ./borgoz
 $ make build
 

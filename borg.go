@@ -47,7 +47,10 @@ type BorgBackupList struct {
 }
 
 func (b *BorgRepo) GetLastBorgBackupTime() (time.Time, error) {
-	err := os.Setenv("BORG_PASSPHRASE", b.key)
+	err := os.Setenv(EnvVariableBorgPassphrase, b.key)
+	defer os.Unsetenv(EnvVariableBorgPassphrase)
+
+
 	if err != nil {
 		return time.Time{}, err
 	}

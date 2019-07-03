@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+var Version string = "v0.0.0"
+
 type Application struct {
 	Config *Configuration
 	Echo   *echo.Echo
@@ -105,7 +107,7 @@ func NewApplication() (Application, error) {
 		e.HideBanner = true
 	}
 
-	app := Application{Config: &cfg, Echo: e, Logger: log.New(LogPrefix)}
+	app := Application{Config: &cfg, Echo: e, Logger: log.New(LogPrefix + " " + Version)}
 	app.Logger.SetLevel(app.Config.LogLevel)
 	app.Logger.Debugf("%v", app.Config)
 

@@ -9,6 +9,7 @@ const (
 	EnvVariableDefaultRepoKey = "BORGOZ_DEFAULT_REPO_KEY"
 	EnvVariableLogLevel       = "BORGOZ_LOG_LEVEL"
 	EnvVariableBorgBin        = "BORGOZ_BORG_BIN"
+	EnvVariableBorgPassphrase = "BORG_PASSPHRASE"
 )
 
 const (

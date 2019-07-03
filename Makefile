@@ -16,7 +16,7 @@ borgoz:
 	@go build $(LDFLAGS)
 
 install: borgoz
-	@go install
+	@go install $(LDFLAGS)
 
 clean:
 	@go clean

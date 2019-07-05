@@ -126,7 +126,7 @@ func (a *Application)handlerBackupNotOlderThen(c echo.Context) error {
 	}
 
 	a.Logger.Infof("repo=%v time=%v key=%v", repo, time, key)
-	borgRepo, err := NewBorgRepo(fmt.Sprintf("%v/%v", a.Config.ReposDirectory, repo), a.Config.BorgBin, key)
+	borgRepo, err := NewBorgRepo(fmt.Sprintf("%v/%v", a.Config.ReposDirectory, repo), a.Config.BorgBin, key, a.Logger)
 	if err != nil {
 		a.Logger.Errorf("NewBorgRepo returned: %v", err)
 		return echo.NewHTTPError(404, fmt.Sprintf("%v is not valid borg repo", repo))

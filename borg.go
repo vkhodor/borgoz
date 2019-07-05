@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/labstack/gommon/log"
 	"os"
 	"os/exec"
 	"strings"
@@ -19,6 +20,7 @@ type BorgRepo struct {
 	key            string
 	lastBackupTime time.Time
 	lastBackupId string
+	logger 			*log.Logger
 }
 
 type BorgBackup struct {
@@ -52,22 +54,29 @@ func (b *BorgRepo) GetLastBorgBackupTime() (time.Time, error) {
 
 
 	if err != nil {
+		b.logger.Errorf("%v", err)
 		return time.Time{}, err
 	}
 
 	borgOut, err := exec.Command(b.borgBin, "list", "--json", b.path).Output()
+	b.logger.Debugf("%v list --json %v", b.borgBin, b.path)
+	
 	if err != nil {
+		b.logger.Errorf("%v", err)
+		b.logger.Debugf("%v", borgOut)
 		return time.Time{}, err
 	}
 
 	backupOut := BorgBackupList{}
 	err = json.Unmarshal(borgOut, &backupOut)
 	if err != nil {
+		b.logger.Errorf("%v", err)
 		return time.Time{}, err
 	}
 
 	b.lastBackupTime, err = ParseTimeInCurrentLocation(backupOut.Repository.LastModified)
 	if err != nil {
+		b.logger.Errorf("%v", err)
 		return time.Time{}, err
 	}
 
@@ -89,12 +98,12 @@ func (b *BorgRepo) IsLastBackupEarlierThen(seconds int) (bool, error) {
 	return true, nil
 }
 
-func NewBorgRepo(path string, borgBin string, key string) (*BorgRepo, error) {
+func NewBorgRepo(path string, borgBin string, key string, logger *log.Logger) (*BorgRepo, error) {
 	if ok, err := IsValidBorgRepo(path); !ok {
 		return &BorgRepo{}, err
 	}
 
-	return &BorgRepo{path: path, borgBin: borgBin, key: key}, nil
+	return &BorgRepo{path: path, borgBin: borgBin, key: key, logger: logger}, nil
 }
 
 func IsValidBorgRepo(path string) (bool, error) {
